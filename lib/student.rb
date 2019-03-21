@@ -9,8 +9,12 @@ class Student
     new_student
   end
 
+  def self.convert(array)
+    array.map{|row| self.new_from_db(row)}
+  end
+
   def self.all
-    DB[:conn].execute("SELECT * FROM students;").map{|row| self.new_from_db(row)}
+    convert(DB[:conn].execute("SELECT * FROM students;"))
   end
 
   def self.find_by_name(name)
@@ -21,7 +25,7 @@ class Student
     LIMIT 1;
     SQL
 
-    DB[:conn].execute(sql, name).map{|row| self.new_from_db(row)}.first
+    convert(DB[:conn].execute(sql, name)).first
   end
 
   def self.all_students_in_grade_9
@@ -31,7 +35,7 @@ class Student
     WHERE grade = 9
     SQL
 
-    DB[:conn].execute(sql).map{|row| self.new_from_db(row)}
+    convert(DB[:conn].execute(sql))
   end
 
   def self.students_below_12th_grade
@@ -41,7 +45,7 @@ class Student
     WHERE grade < 12
     SQL
 
-    DB[:conn].execute(sql).map{|row| self.new_from_db(row)}
+    convert(DB[:conn].execute(sql))
   end
 
   def self.first_X_students_in_grade_10(x)
@@ -52,7 +56,7 @@ class Student
     LIMIT ?
     SQL
 
-    DB[:conn].execute(sql,x).map{|row| self.new_from_db(row)}
+    convert(DB[:conn].execute(sql,x))
   end
 
   def self.first_student_in_grade_10
@@ -62,7 +66,7 @@ class Student
     WHERE grade = 10
     SQL
 
-    DB[:conn].execute(sql).map{|row| self.new_from_db(row)}.first
+    convert(DB[:conn].execute(sql)).first
   end
 
   def self.all_students_in_grade_X(x)
@@ -72,7 +76,7 @@ class Student
     WHERE grade = ?
     SQL
 
-    DB[:conn].execute(sql,x).map{|row| self.new_from_db(row)}
+    convert(DB[:conn].execute(sql,x))
   end
 
   def save
